@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import companyLogo from '../assets/mymemcenterlogo.png';
 import MuiDrawer from "@mui/material/Drawer";
 import { styled, useTheme } from "@mui/material/styles";
-
 import {
     Avatar,
     Box,
@@ -16,6 +15,15 @@ import {
     ListItemText,
     Toolbar,
 } from "@mui/material";
+import AppBar from '@mui/material/AppBar';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import AdbIcon from '@mui/icons-material/Adb';
 import { 
     FaAddressBook,
     FaSearchLocation,
@@ -28,33 +36,23 @@ import {
     MdExpandMore,    
 } from "react-icons/md";
 import { HiHome, HiOutlineDocumentAdd, HiOutlineTemplate } from "react-icons/hi";
-
-import { MdOutlineVideoLibrary, MdAddBox, MdAddLocationAlt } from "react-icons/md";
-import { BsFillEyeFill } from "react-icons/bs";
-import { HiChevronLeft, HiChevronRight, HiTemplate } from "react-icons/hi";
+import { MdOutlineVideoLibrary, MdAddBox, MdOutlineCloudDownload } from "react-icons/md";
+import { HiChevronLeft, HiChevronRight, HiDownload } from "react-icons/hi";
 import { BiImages, BiImageAdd, BiVideoPlus} from "react-icons/bi";
 import { RxDashboard } from "react-icons/rx";
-import { TbMoodKid, TbMoodCrazyHappy } from "react-icons/tb";
-
-
-
+import { TbMoodKid, TbMoodCrazyHappy, TbTemplate } from "react-icons/tb";
 import { NavLink } from "react-router-dom";
-import AppBar from '@mui/material/AppBar';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-
 import useToggle from "../use-toggle";
+import {set_toggle_drawer} from '../redux/features/drawer-slice';
+import {useDispatch} from 'react-redux';
+
 
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const drawerWidth = 200;
+
+
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -119,6 +117,8 @@ function Navbar() {
 
     const theme = useTheme();
 
+    const dispatch = useDispatch();
+
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
@@ -162,6 +162,7 @@ function Navbar() {
 
     const handleDrawerClose = () => {
         setDrawerOpen(state => !state);
+        dispatch(set_toggle_drawer(drawerOpen))
     };
 
     return (
@@ -536,10 +537,10 @@ function Navbar() {
 
                     <Collapse in={showLoadOptions} timeout="auto" unmountOnExit>
                         <List component="div" disablePadding>
-                            <NavLink exact to="#">
+                            <NavLink exact to="/images/vegetarian">
                                 <ListItem
                                     component={NavLink}
-                                    to="#"
+                                    to="/images/vegetarian"
                                     button
                                     key={"vegetarian"}
                                     title="Vegetarian"
@@ -655,8 +656,8 @@ function Navbar() {
                             <NavLink to={"#"}>
                                 <ListItem
                                     button
-                                    key={"Load Reports"}
-                                    title="Load Reports"
+                                    key={"vegetarian"}
+                                    title="Vegetarian"
                                     style={
                                         drawerOpen
                                             ? { paddingTop: "11px", paddingBottom: "11px" }
@@ -668,10 +669,44 @@ function Navbar() {
                                             drawerOpen ? { minWidth: "25px", marginLeft: "1em" } : {}
                                         }
                                     >
-                                        <FaBox className=" text-md" />
+                                       <TbMoodKid className="text-my-blue text-xl" />
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary={"Load Reports"}
+                                        primary={"Vegetarian"}
+                                        sx={
+                                            drawerOpen
+                                                ? {
+                                                    "& .MuiTypography-root": {
+                                                        fontSize: "12px",
+                                                        fontWeight: "bold",
+                                                    },
+                                                }
+                                                : null
+                                        }
+                                        style={drawerOpen ? {} : { visibility: " hidden" }}
+                                    />
+                                </ListItem>
+                            </NavLink>
+                            <NavLink to={"#"}>
+                                <ListItem
+                                    button
+                                    key={"nonvegetarian"}
+                                    title="Non Vegetarian"
+                                    style={
+                                        drawerOpen
+                                            ? { paddingTop: "11px", paddingBottom: "11px" }
+                                            : {}
+                                    }
+                                >
+                                    <ListItemIcon
+                                        style={
+                                            drawerOpen ? { minWidth: "25px", marginLeft: "1em" } : {}
+                                        }
+                                    >
+                                       <TbMoodCrazyHappy className="text-my-blue text-xl" />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={"Non Vegetarian"}
                                         sx={
                                             drawerOpen
                                                 ? {
@@ -732,8 +767,8 @@ function Navbar() {
                                     component={NavLink}
                                     to="#"
                                     button
-                                    key={"ViewLocation"}
-                                    title="ViewLocation"
+                                    key={"mytemplates"}
+                                    title="My Templates"
                                     style={
                                         drawerOpen
                                             ? { paddingTop: "11px", paddingBottom: "11px" }
@@ -747,10 +782,10 @@ function Navbar() {
                                                 : {}
                                         }
                                     >
-                                        <BsFillEyeFill />
+                                        <TbTemplate className="text-my-blue text-xl" />
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary={"View Location"}
+                                        primary={"My Templates"}
                                         sx={
                                             drawerOpen
                                                 ? {
@@ -767,13 +802,13 @@ function Navbar() {
                             </NavLink>
 
 
-                            <NavLink to="#">
+                            <NavLink to="/mydashboard/mydownloads">
                                 <ListItem
                                     component={NavLink}
-                                    to="#"
+                                    to="/mydashboard/mydownloads"
                                     button
-                                    key={"AddLocation"}
-                                    title="AddLocation"
+                                    key={"mydownloads"}
+                                    title="My Downloads"
                                     style={
                                         drawerOpen
                                             ? { paddingTop: "11px", paddingBottom: "11px" }
@@ -787,10 +822,10 @@ function Navbar() {
                                                 : {}
                                         }
                                     >
-                                        <MdAddLocationAlt />
+                                        <MdOutlineCloudDownload  className="text-my-blue text-xl"/>
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary={"Add Location"}
+                                        primary={"My Downloads"}
                                         sx={
                                             drawerOpen
                                                 ? {
