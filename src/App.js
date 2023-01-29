@@ -2,33 +2,59 @@ import Navbar from './navbar/navbar';
 import Images from './pages/images';
 import MyDownloads from './pages/my-downloads';
 import InsideFolder from './pages/inside-folder';
-
-
-
+import Profile from './pages/profile';
+import UploadMedia from './pages/upload-media';
+import LogIn from './pages/login';
+import Register from './pages/register';
+import NotFound from './pages/not-found';
 import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
 import './App.css';
-import { Navigate, Route, Routes } from 'react-router-dom';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useLocation, useNavigate, Route, Routes } from 'react-router-dom';
+import { useEffect } from 'react';
+
+
 
 function App() {
   const drawerToggleState = useSelector((state) => state.drawer.toggle_drawer);
   // const folderParamId = useSelector((state) => state.folder.folder_param_id);
   // console.log(folderParamId,'folderParamId');
+  const location = useLocation();
+
+  const navigate = useNavigate();
+
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+  useEffect(() => {
+    if (isLoggedIn === "false") {
+      navigate('/login')
+    } else {
+      navigate('/profile')
+    }
+  }, [])
+
+  const mt = (location.pathname === '/login' || location.pathname === '/register') ? 'mt-[0px] ml-[0px]' : 'mt-[4rem] ml-[200px]';
 
   return (
     <div className="App">
-      <Navbar />
+      {isLoggedIn === "true" ? <Navbar /> : null}
       <CssBaseline />
-      <Container maxWidth="xl">
-        <main className={!drawerToggleState ? 'mt-[78px] ml-48' : 'mt-[78px] ml-[60px] ' }>
+      <>
+        <main className={!drawerToggleState ? mt : 'mt-[4rem] ml-[4rem]'}>
           <Routes>
-            <Route path="/images/vegetarian" element={<Images />}></Route>
-            <Route path="/mydashboard/mydownloads" element={<MyDownloads />}></Route>
-            <Route path="/mydashboard/mydownloads/:id" element={<InsideFolder />}></Route>            
+            {isLoggedIn === "true" ? <Route path="/images/vegetarian" element={<Images />}></Route> : null}
+            {isLoggedIn === "true" ? <Route path="/mydashboard/mydownloads" element={<MyDownloads />}></Route> : null}
+            {isLoggedIn === "true" ? <Route path="/mydashboard/mydownloads/:id" element={<InsideFolder />}></Route> : null}
+            {isLoggedIn === "true" ? <Route path="/profile" element={<Profile />}></Route> : null}
+            {isLoggedIn === "true" ? <Route path="/upload-media" element={<UploadMedia />}></Route> : null}       
+            
+            <Route path="/login" element={<LogIn />}></Route>
+            <Route path="/register" element={<Register />}></Route>
+            <Route path="/not-found" element={<NotFound />} />
+            <Route path="*" element={<NotFound />}/>
           </Routes>
         </main>
-      </Container>
+      </>
     </div>
   );
 }

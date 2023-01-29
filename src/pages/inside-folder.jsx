@@ -25,6 +25,9 @@ import DeleteItemModal from '../models/delete-item-modal';
 import { useAlert, types } from 'react-alert';
 import useDownloader from "react-use-downloader";
 import {LinearProgress} from '@material-ui/core';
+
+
+
 function InsideFolder() {
   const [insideFolderData, setInsideFolderData] = useState([]);
   const [selectedMedia, setSelectedMedia] = useState({});
@@ -47,7 +50,7 @@ function InsideFolder() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const alert = useAlert()
+  const alert = useAlert();
 
 
   const refreshItemsData = () => {
