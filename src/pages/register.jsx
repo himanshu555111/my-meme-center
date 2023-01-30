@@ -4,20 +4,25 @@ import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../APIs/auth';
 import { useDispatch } from 'react-redux';
 import { HiLightBulb } from 'react-icons/hi';
+import { BsFillCameraFill } from 'react-icons/bs';
 import { BsCheck2All } from 'react-icons/bs';
 import { RxCross2 } from 'react-icons/rx';
+import { useAlert, types } from 'react-alert';
 
 
 import { isUserNameExist_API } from '../APIs/auth';
 
 function Register() {
+
+    const alert = useAlert()
+
     const initFormData = {
         user_name: "",
         f_name: "",
         l_name: "",
         email: "",
         password: "",
-        confirmPassword: ""
+        confirm_password: ""
     }
     const onInputValidate = (value, name) => {
         setFormDataError(prev => ({
@@ -51,17 +56,15 @@ function Register() {
             errorMsg: '',
             onValidateFunc: onInputValidate
         },
-        confirmPassword: {
-            isReq: true,
-            errorMsg: '',
-            onValidateFunc: onInputValidate
-        }
 
     }
     const [formData, setFormData] = useState(initFormData);
     const [formDataError, setFormDataError] = useState(initFormDataError);
 
     const [isUserNameExist, setIsUserNameExist] = useState(null);
+    const [isPasswordMatched, setIsPasswordMatched] = useState(null);
+
+
 
 
     const navigate = useNavigate();
@@ -92,36 +95,81 @@ function Register() {
         const isValid = validateForm();
         if (!isValid) {
             console.error('Invalid Form!');
-        } else if (formData?.password !== formData?.confirmPassword) {
-            console.error('password not matched');
+        } else if (formData?.password !== formData?.confirm_password) {
+            setIsPasswordMatched(false);
         } else if (isUserNameExist === true) {
             console.error('user name already exist');
         } else {
             dispatch(registerUser(formData, data => {
-                console.log(data, 'good to go')
+                if (data?.status === 200) {
+                    alert.show(`Registered successfully`, { type: types.SUCCESS });
+                    navigate('/login');
+                    setFormData(initFormData);
+                    setFormDataError(initFormDataError);
+                } else {
+                    alert.show("Sorry, something went wrong, try after sometime", { type: types.ERROR });
+                }
             }))
         }
     }
     const onChange = (e) => {
         const { name, value } = e.target;
         if (name === "user_name") {
-            if(!formData?.user_name){
-
-            }else{
-                
+            if (value === "") {
+                setIsUserNameExist(null);
+                setFormDataError(prev => ({
+                    ...prev,
+                    user_name: {
+                        isReq: true,
+                        errorMsg: '',
+                        onValidateFunc: onInputValidate
+                    }
+                }))
+                setFormData(state => ({
+                    ...state,
+                    user_name: value,
+                }))
+            } else {
+                setFormDataError(prev => ({
+                    ...prev,
+                    user_name: {
+                        isReq: true,
+                        errorMsg: '',
+                        onValidateFunc: onInputValidate
+                    }
+                }))
+                setFormData(state => ({
+                    ...state,
+                    user_name: value,
+                }))
+                dispatch(isUserNameExist_API({ user_name: value }, data => {
+                    if (data?.data?.isExist === false) {
+                        setIsUserNameExist(false);
+                    } else {
+                        setIsUserNameExist(true);
+                    }
+                }))
             }
-            dispatch(isUserNameExist_API({ user_name: value }, data => {
-                if (data?.data?.isExist === false) {
-                    setIsUserNameExist(false);
-                } else {
-                    setIsUserNameExist(true);
-                }
-            }))
+
+        } else if (name === "confirm_password") {
             setFormData(state => ({
                 ...state,
-                user_name: value,
+                [name]: value
             }))
+            if (formData?.password === value) {
+                setIsPasswordMatched(true);
+            } else {
+                setIsPasswordMatched(false);
+            }
         } else {
+            setFormDataError(prev => ({
+                ...prev,
+                [name]: {
+                    isReq: true,
+                    errorMsg: '',
+                    onValidateFunc: onInputValidate
+                }
+            }))
             setFormData(state => ({
                 ...state,
                 [name]: value
@@ -132,10 +180,13 @@ function Register() {
         <>
             <section className="h-screen">
                 <div className="container px-6 py-12 h-full">
-                    <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
+                    <div style={{ display: "flex", alignItems: "center" }} className="flex-col h-full g-6 text-gray-800">
+                        
+                        <img alt="profileImage" src="https://i.ibb.co/QrwzjST/34.jpg" className="object-cover shadow-xl rounded-full h-44 w-44 align-middle border-none mb-4" />
+                        <BsFillCameraFill className="absolute w-10 h-10 p-2 top-48 bg-my-blue text-my-yellow rounded-full"/>
                         <div className="md:w-8/12 lg:w-5/12 ">
                             <form onSubmit={handleRegister}>
-                                <p className='text-my-blue text-xs flex flex-row align-center'><HiLightBulb className=" mb-2 mr-1 text-my-blue text-lg" /> User Name is strictly required, This will be unique name of your profile.</p>
+                                <p className='text-my-blue text-xs flex flex-row align-center'><HiLightBulb className=" mb-2 mr-1 text-my-blue text-lg" />User Name is strictly required, This will be unique name of your profile.</p>
                                 <div className="mb-6">
                                     <input
                                         onChange={onChange}
@@ -207,7 +258,9 @@ function Register() {
                                         className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                         placeholder="Confirm Password"
                                     />
-                                    {formDataError?.confirmPassword?.errorMsg ? <p className='text-red-600 text-xs text-left mt-1'>This Field is required</p> : null}
+                                    {isPasswordMatched === true && <p className='text-red-600 text-xs flex flex-row text-left mt-1'> <BsCheck2All className="text-red-600 text-lg mr-1" />Password Matched</p>}
+                                    {isPasswordMatched === false && <p className='text-red-600 text-xs flex flex-row text-left mt-1'><RxCross2 className="text-red-600 text-lg mr-1" />Password did not Matched</p>}
+
                                 </div>
 
                                 <div className="flex justify-between items-center mb-6">

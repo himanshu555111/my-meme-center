@@ -25,13 +25,15 @@ function App() {
 
   const isLoggedIn = localStorage.getItem("isLoggedIn");
 
+  console.log(isLoggedIn,'524')
+
   useEffect(() => {
-    if (isLoggedIn === "false") {
+    if (!isLoggedIn || isLoggedIn === 'false') {
       navigate('/login')
     } else {
       navigate('/profile')
     }
-  }, [])
+  }, [isLoggedIn])
 
   const mt = (location.pathname === '/login' || location.pathname === '/register') ? 'mt-[0px] ml-[0px]' : 'mt-[4rem] ml-[200px]';
 

@@ -270,13 +270,13 @@ function Navbar() {
                                         </Menu>
                                     </Box>
 
-                                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', marginLeft: 10 }}>
+                                    <Box sx={{ marginRight:40, flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', marginLeft: 8, minWidth:'fit-content' }}>
                                         <Button
                                             key={'gohome'}
                                             onClick={handleCloseNavMenu}
                                             sx={{
                                                 my: 2, color: 'white', display: 'block',
-                                                textTransform: 'unset',
+                                                textTransform: 'unset', 
                                                 ':hover': {
                                                     bgcolor: '#344698',
                                                     color: 'white',
@@ -291,7 +291,7 @@ function Navbar() {
                                             onClick={handleCloseNavMenu}
                                             sx={{
                                                 my: 2, color: 'white', display: 'block',
-                                                textTransform: 'unset',
+                                                textTransform: 'unset', 
                                                 ':hover': {
                                                     bgcolor: '#344698',
                                                     color: 'white',
@@ -305,7 +305,7 @@ function Navbar() {
                                             onClick={handleCloseNavMenu}
                                             sx={{
                                                 my: 2, color: 'white', display: 'block',
-                                                textTransform: 'unset',
+                                                textTransform: 'unset', 
                                                 ':hover': {
                                                     bgcolor: '#344698',
                                                     color: 'white',
@@ -319,7 +319,7 @@ function Navbar() {
                                             onClick={handleCloseNavMenu}
                                             sx={{
                                                 my: 2, color: 'white', display: 'block',
-                                                textTransform: 'unset',
+                                                textTransform: 'unset', 
                                                 ':hover': {
                                                     bgcolor: 'gold',
                                                     color: 'black',
@@ -330,7 +330,8 @@ function Navbar() {
                                             <span className='flex flex-row'><FaCrown className='text-xl mr-2 text-my-golden' /> {'Premium Membership'}</span>
                                         </Button>
                                     </Box>
-                                    <Box sx={{ marginLeft: 55, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                         <Box>
                                             <Tooltip title="Upload Media">
                                                 <Button
