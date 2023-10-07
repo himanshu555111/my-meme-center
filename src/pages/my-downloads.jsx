@@ -147,7 +147,7 @@ function MyDownloads() {
     return (
         <>
             <div className='w-full h-10 bg-gray-100 flex items-center mb-5'>
-                <p className='text-left text-xs text-my-blue ml-5 flex flex-row '><MdOutlineLiveHelp className=' mr-1 text-sm' />Double click on folder's Name or Description to change.</p>
+                <p className='text-left text-xs text-my-blue ml-5 flex flex-row '><MdOutlineLiveHelp className=' mr-1 text-sm' />Double click to open folder.</p>
             </div>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle className='text-my-blue'>Creating Folder</DialogTitle>

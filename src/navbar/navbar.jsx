@@ -44,7 +44,7 @@ import { TbMoodKid, TbMoodCrazyHappy, TbTemplate } from "react-icons/tb";
 import { Navigate, NavLink } from "react-router-dom";
 import useToggle from "../use-toggle";
 import { set_toggle_drawer } from '../redux/features/drawer-slice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import UploadMediaModal from '../models/upload-media-modal';
 
@@ -112,6 +112,7 @@ function Navbar() {
     const [showReportingOptions, toggleReportingOptions] = useToggle(false);
     const [showLoadOptions, setShowLoadOptions] = React.useState(false);
     const [showCarrierOptions, setShowCarrierOptions] = React.useState(false);
+    const [showCreateOwnOptions, setShowCreateOwnOptions] = React.useState(false);
 
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -119,15 +120,19 @@ function Navbar() {
     const [open, setOpen] = React.useState(false);
     const [selectedUploadOption, setSelectedUploadOption] = React.useState('');
 
+
+
+
     const location = useLocation();
 
+    const userInfo = useSelector((state) => state.user.user_info);
 
     useEffect(() => {
         if (location.pathname === '/login' || location.pathname === '/register') {
             setHideDrawer(true);
             // handleDrawerClose();
         } else {
-            setHideDrawer(false);         
+            setHideDrawer(false);
         }
     }, [location.pathname])
 
@@ -210,6 +215,9 @@ function Navbar() {
         navigate('/login')
     }
 
+    const handleCreateYourOwnClick = () => {
+        setShowCreateOwnOptions(state => !state)
+    }
 
     return (
         <>
@@ -270,13 +278,13 @@ function Navbar() {
                                         </Menu>
                                     </Box>
 
-                                    <Box sx={{ marginRight:40, flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', marginLeft: 8, minWidth:'fit-content' }}>
+                                    <Box sx={{ marginRight: 40, flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', marginLeft: 8, minWidth: 'fit-content' }}>
                                         <Button
                                             key={'gohome'}
                                             onClick={handleCloseNavMenu}
                                             sx={{
                                                 my: 2, color: 'white', display: 'block',
-                                                textTransform: 'unset', 
+                                                textTransform: 'unset',
                                                 ':hover': {
                                                     bgcolor: '#344698',
                                                     color: 'white',
@@ -291,7 +299,7 @@ function Navbar() {
                                             onClick={handleCloseNavMenu}
                                             sx={{
                                                 my: 2, color: 'white', display: 'block',
-                                                textTransform: 'unset', 
+                                                textTransform: 'unset',
                                                 ':hover': {
                                                     bgcolor: '#344698',
                                                     color: 'white',
@@ -305,7 +313,7 @@ function Navbar() {
                                             onClick={handleCloseNavMenu}
                                             sx={{
                                                 my: 2, color: 'white', display: 'block',
-                                                textTransform: 'unset', 
+                                                textTransform: 'unset',
                                                 ':hover': {
                                                     bgcolor: '#344698',
                                                     color: 'white',
@@ -319,7 +327,7 @@ function Navbar() {
                                             onClick={handleCloseNavMenu}
                                             sx={{
                                                 my: 2, color: 'white', display: 'block',
-                                                textTransform: 'unset', 
+                                                textTransform: 'unset',
                                                 ':hover': {
                                                     bgcolor: 'gold',
                                                     color: 'black',
@@ -330,7 +338,7 @@ function Navbar() {
                                             <span className='flex flex-row'><FaCrown className='text-xl mr-2 text-my-golden' /> {'Premium Membership'}</span>
                                         </Button>
                                     </Box>
-                                    
+
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                         <Box>
                                             <Tooltip title="Upload Media">
@@ -352,7 +360,7 @@ function Navbar() {
                                         <Box sx={{ flexGrow: 0, marginLeft: 4 }}>
                                             <Tooltip title="Open settings">
                                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                                    <Avatar alt="Remy Sharp" src={userInfo?.url} />
                                                 </IconButton>
                                             </Tooltip>
                                             <Menu
@@ -411,43 +419,125 @@ function Navbar() {
                             <List
                                 sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
                             >
-                                <NavLink exact to="#">
-                                    <ListItem
-                                        component={NavLink}
-                                        // to="/dashboard"
-                                        button
-                                        key={"createyourown"}
-                                        title="Create your own"
-                                        style={
-                                            drawerOpen ? { paddingTop: "11px", paddingBottom: "11px" } : {}
-                                        }
-                                    >
-                                        <ListItemIcon style={{ minWidth: "25px" }}>
-                                            <HiOutlineDocumentAdd className="text-my-blue text-xl" />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            primary={"Create your own"}
-                                            sx={
-                                                drawerOpen
-                                                    ? {
-                                                        "& .MuiTypography-root": {
-                                                            fontSize: "12px",
-                                                            fontWeight: "bold",
-                                                        },
-                                                    }
-                                                    : null
+                                <>
+                                    <NavLink exact to="#">
+                                        <ListItem
+                                            component={NavLink}
+                                            to="#"
+                                            key={"createyourown"}
+                                            title="Create your own"
+                                            onClick={handleCreateYourOwnClick}
+                                            style={
+                                                drawerOpen ? { paddingTop: "11px", paddingBottom: "11px" } : {}
                                             }
-                                            style={drawerOpen ? {} : { visibility: " hidden" }}
-                                        />
-                                    </ListItem>
-                                </NavLink>
+                                        >
+                                            <ListItemIcon style={{ minWidth: "25px" }}>
+                                                <HiOutlineDocumentAdd className="text-my-blue text-xl" />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={"Create your own"}
+                                                sx={
+                                                    drawerOpen
+                                                        ? {
+                                                            "& .MuiTypography-root": {
+                                                                fontSize: "12px",
+                                                                fontWeight: "bold",
+                                                            },
+                                                        }
+                                                        : null
+                                                }
+                                                style={drawerOpen ? {} : { visibility: " hidden" }}
+                                            />
+                                            {showCreateOwnOptions ? <MdExpandLess /> : <MdExpandMore />}
+                                        </ListItem>
+                                    </NavLink>
+                                    <Collapse in={showCreateOwnOptions} timeout="auto" unmountOnExit>
+                                        <List component="div" disablePadding>
+                                            <NavLink to="/create/newimage">
+                                                <ListItem
+                                                    component={NavLink}
+                                                    to="/create/newimage"                                                    
+                                                    key={"createOwnTemplate"}
+                                                    title="Create Image Template"
+                                                    style={
+                                                        drawerOpen
+                                                            ? { paddingTop: "11px", paddingBottom: "11px" }
+                                                            : {}
+                                                    }
+                                                >
+                                                    <ListItemIcon
+                                                        style={
+                                                            drawerOpen
+                                                                ? { minWidth: "25px", marginLeft: "1em" }
+                                                                : {}
+                                                        }
+                                                    >
+                                                        <BiImageAdd className="text-my-blue text-xl" />
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        sx={
+                                                            drawerOpen
+                                                                ? {
+                                                                    "& .MuiTypography-root": {
+                                                                        fontSize: "12px",
+                                                                        fontWeight: "bold",
+                                                                    },
+                                                                }
+                                                                : null
+                                                        }
+                                                        primary={"Create Image Template"}
+                                                        style={drawerOpen ? {} : { visibility: " hidden" }}
+                                                    />
+                                                </ListItem>
+                                            </NavLink>
+
+                                            <NavLink to="#">
+                                                <ListItem
+                                                    component={NavLink}
+                                                    to="#"
+                                                    button
+                                                    key={"videotemplates"}
+                                                    title="Video Templates"
+                                                    style={
+                                                        drawerOpen
+                                                            ? { paddingTop: "11px", paddingBottom: "11px" }
+                                                            : {}
+                                                    }
+                                                >
+                                                    <ListItemIcon
+                                                        style={
+                                                            drawerOpen
+                                                                ? { minWidth: "25px", marginLeft: "1em" }
+                                                                : {}
+                                                        }
+                                                    >
+                                                        <BiVideoPlus className="text-my-blue text-xl" />
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        primary={"Video Templates"}
+                                                        sx={
+                                                            drawerOpen
+                                                                ? {
+                                                                    "& .MuiTypography-root": {
+                                                                        fontSize: "12px",
+                                                                        fontWeight: "bold",
+                                                                    },
+                                                                }
+                                                                : null
+                                                        }
+                                                        style={drawerOpen ? {} : { visibility: " hidden" }}
+                                                    />
+                                                </ListItem>
+                                            </NavLink>
+                                        </List>
+                                    </Collapse>
+                                </>
 
                                 <>
                                     <NavLink exact to="#">
                                         <ListItem
                                             component={NavLink}
                                             to="#"
-                                            button
                                             key={"templates"}
                                             onClick={handleCarrierClick}
                                             title="Templates"
@@ -483,7 +573,7 @@ function Navbar() {
                                             <NavLink to="#">
                                                 <ListItem
                                                     component={NavLink}
-                                                    to="#"
+                                                    to="/create/newimage"
                                                     button
                                                     key={"imagesoftemplates"}
                                                     title="Image Templates"

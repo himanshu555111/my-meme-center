@@ -10,8 +10,6 @@ const config = {
 }
 
 export const uploadImageApiCall = (data, callback) => {
-    // console.log(data,'558')
-
     return async () => {
         axios.post(UPLOADIMAGE_URL, data, config).then(data => {    
              callback(data);

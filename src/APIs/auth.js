@@ -6,12 +6,23 @@ const USERDETAILS_URL = "http://localhost:5000/userDetails";
 const ISUSERNAMEEXIST_URL = "http://localhost:5000/isUserNameExist";
 
 
-
-
+const config = {
+    headers: {
+        'content-type': 'multipart/form-data'
+    }
+}
 
 export const registerUser = (data, callback) => {
     return async () => {
-        axios.post(REGISTER_URL, data).then(data => {    
+        axios.post(REGISTER_URL, data, config).then(data => {    
+             callback(data);
+        })
+    }
+}
+
+export const updateRegisteredUser = (data, callback) => {
+    return async () => {
+        axios.put(REGISTER_URL, data, config).then(data => {    
              callback(data);
         })
     }

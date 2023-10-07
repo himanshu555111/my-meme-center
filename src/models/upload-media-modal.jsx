@@ -22,23 +22,25 @@ import { useNavigate } from 'react-router-dom';
 
 const uploadOptions = [
     {
-        optionName:'Upload Media',
-        optionIcon:<FileUploadIcon/>
+        optionName: 'Upload Media',
+        optionIcon: <FileUploadIcon />
     },
     {
         optionName: 'Create and Upload Media',
-        optionIcon:<CreateIcon/>
-    } 
+        optionIcon: <CreateIcon />
+    }
 ];
 
 function UploadMediaModal(props) {
     const { onClose, selectedUploadOption, open } = props;
     const navigate = useNavigate();
+
     const handleClose = () => {
         onClose(selectedUploadOption);
     };
+
     const handleListItemClick = (value) => {
-        if(value === "Upload Media"){
+        if (value === "Upload Media") {
             navigate('/upload-media');
         }
         onClose(value);
@@ -47,8 +49,8 @@ function UploadMediaModal(props) {
         <Dialog onClose={handleClose} open={open}>
             <DialogTitle>Choose an option to upload</DialogTitle>
             <List sx={{ pt: 0 }}>
-                {uploadOptions.map((res) => (
-                    <ListItem disableGutters>
+                {uploadOptions.map((res, index) => (
+                    <ListItem key={index} disableGutters>
                         <ListItemButton onClick={() => handleListItemClick(res?.optionName)} key={res?.optionName}>
                             <IconButton>
                                 {res?.optionIcon}

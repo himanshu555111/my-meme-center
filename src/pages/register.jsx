@@ -1,5 +1,5 @@
 import React from 'react'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../APIs/auth';
 import { useDispatch } from 'react-redux';
@@ -8,14 +8,24 @@ import { BsFillCameraFill } from 'react-icons/bs';
 import { BsCheck2All } from 'react-icons/bs';
 import { RxCross2 } from 'react-icons/rx';
 import { useAlert, types } from 'react-alert';
-
-
+import ReactCrop, {
+    centerCrop,
+    makeAspectCrop,
+} from 'react-image-crop';
+import { CanvasPreview } from '../models/canvas-preview';
+import { UseDebounceEffect } from './useDebounceEffect';
+import 'react-image-crop/dist/ReactCrop.css';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
 import { isUserNameExist_API } from '../APIs/auth';
+import { Button } from '@mui/material';
+import uploadVector from '../assets/upload_vector.jpg';
+
+
 
 function Register() {
 
-    const alert = useAlert()
-
+   
     const initFormData = {
         user_name: "",
         f_name: "",
@@ -64,17 +74,103 @@ function Register() {
     const [isUserNameExist, setIsUserNameExist] = useState(null);
     const [isPasswordMatched, setIsPasswordMatched] = useState(null);
 
+    const [imgSrc, setImgSrc] = useState('');
+    const [crop, setCrop] = useState();
+    const [completedCrop, setCompletedCrop] = useState();
+    const [output, setOutput] = useState('');
+    const [aspect, setAspect] = useState(16 / 16);
+    const [open, setOpen] = useState(false);
 
+  
 
+    const previewCanvasRef = useRef(null);
+    const imgRef = useRef(null);
+    const inputForImage = useRef(null);
+
+    const alert = useAlert()
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    // useEffect(() => {
-    //     console.log('hey')
-    // }, [])
+
+
+    function centerAspectCrop(
+        mediaWidth,
+        mediaHeight,
+        aspect,
+    ) {
+        return centerCrop(
+            makeAspectCrop(
+                {
+                    unit: '%',
+                    width: 90,
+                },
+                aspect,
+                mediaWidth,
+                mediaHeight,
+            ),
+            mediaWidth,
+            mediaHeight,
+        )
+    }
+
+    function onSelectFile(e) {
+        if (e.target.files && e.target.files.length > 0) {
+            setCrop(undefined) // Makes crop preview update between images.
+            const reader = new FileReader()
+            reader.addEventListener('load', () =>
+                setImgSrc(reader.result?.toString() || ''),
+                setOpen(true)
+            )
+            reader.readAsDataURL(e.target.files[0])
+        }
+    }
+
+    function onImageLoad(e) {
+        if (aspect) {
+            const { width, height } = e.currentTarget
+            setCrop(centerAspectCrop(width, height, aspect))
+        }
+    }
+
+
+    UseDebounceEffect(
+        async () => {
+            if (
+                completedCrop?.width &&
+                completedCrop?.height &&
+                imgRef.current &&
+                previewCanvasRef.current
+            ) {
+                // We use canvasPreview as it's much faster than imgPreview.
+                CanvasPreview(
+                    imgRef.current,
+                    previewCanvasRef.current,
+                    completedCrop,
+
+                )
+            }
+        },
+        100,
+        [completedCrop],
+    )
+
+
+    const handlePickImage = () => {
+        inputForImage.current.click();
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+        setCrop();
+        setCompletedCrop();
+        setImgSrc('');
+    }
+
+
     const alreadyHaveAccountClick = () => {
         navigate('/login');
     }
+
 
     const validateForm = () => {
         let isInvalid = false;
@@ -100,16 +196,36 @@ function Register() {
         } else if (isUserNameExist === true) {
             console.error('user name already exist');
         } else {
-            dispatch(registerUser(formData, data => {
-                if (data?.status === 200) {
-                    alert.show(`Registered successfully`, { type: types.SUCCESS });
-                    navigate('/login');
-                    setFormData(initFormData);
-                    setFormDataError(initFormDataError);
-                } else {
-                    alert.show("Sorry, something went wrong, try after sometime", { type: types.ERROR });
+           
+            fetch(output).then(res => res.blob()).then(blob => {
+                const formDataForProfileUpload = new FormData();
+                const file = new File([blob], "profileImage.jpeg");
+                console.log(file,'file')
+                formDataForProfileUpload.append('image', file)
+                formDataForProfileUpload.append('user_name', formData?.user_name);
+                formDataForProfileUpload.append('f_name', formData?.f_name);
+                formDataForProfileUpload.append('l_name', formData?.l_name);
+                formDataForProfileUpload.append('email', formData?.email);
+                formDataForProfileUpload.append('password', formData?.password);
+                formDataForProfileUpload.append('has_cover_pic', false)
+                if(output === '' || output === undefined){
+                    formDataForProfileUpload.append('has_profile_pic', false)
+                }else{
+                    formDataForProfileUpload.append('has_profile_pic', true)
                 }
-            }))
+
+                dispatch(registerUser(formDataForProfileUpload, data => {                  
+                    if (data?.status === 200 && data?.data?.okStatus === true) {
+                        alert.show(`Registered successfully`, { type: types.SUCCESS });
+                        navigate('/login');
+                        setFormData(initFormData);
+                        setFormDataError(initFormDataError);
+                    } else {
+                        alert.show("Sorry, something went wrong, try after sometime", { type: types.ERROR });
+                    }
+                }))
+            })
+
         }
     }
     const onChange = (e) => {
@@ -176,14 +292,106 @@ function Register() {
             }))
         }
     }
+
+    const handleCropNow = (canvas, image) => {
+
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        canvas.width = completedCrop.width;
+        canvas.height = completedCrop.height;
+        const ctx = canvas.getContext('2d');
+
+        const pixelRatio = window.devicePixelRatio;
+        canvas.width = completedCrop.width * pixelRatio;
+        canvas.height = completedCrop.height * pixelRatio;
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        ctx.imageSmoothingQuality = 'high';
+
+        ctx.drawImage(
+            image,
+            completedCrop.x * scaleX,
+            completedCrop.y * scaleY,
+            completedCrop.width * scaleX,
+            completedCrop.height * scaleY,
+            0,
+            0,
+            completedCrop.width,
+            completedCrop.height,
+        );
+
+        // Converting to base64
+        const base64Image = canvas.toDataURL('image/jpeg');
+
+        setOutput(base64Image);
+        handleClose();
+    }
+
+    // console.log(crop)
+    // console.log(output,'output')
+
     return (
         <>
             <section className="h-screen">
                 <div className="container px-6 py-12 h-full">
                     <div style={{ display: "flex", alignItems: "center" }} className="flex-col h-full g-6 text-gray-800">
-                        
-                        <img alt="profileImage" src="https://i.ibb.co/QrwzjST/34.jpg" className="object-cover shadow-xl rounded-full h-44 w-44 align-middle border-none mb-4" />
-                        <BsFillCameraFill className="absolute w-10 h-10 p-2 top-48 bg-my-blue text-my-yellow rounded-full"/>
+                        <div className='w-fit'>
+                            {!!imgSrc && (
+                                <Dialog onClose={handleClose} open={open}>
+                                    <DialogTitle sx={{ fontWeight: 600 }} >Crop your profile Image</DialogTitle>
+                                    <div className='flex flex-row'>
+                                        <div>
+                                            <ReactCrop
+                                                crop={crop}
+                                                onChange={(_, percentCrop) => {
+                                                    setCrop(percentCrop)
+                                                }}
+                                                onComplete={(c) => { setCompletedCrop(c) }}
+                                                aspect={aspect}
+                                            >
+                                                <img
+                                                    ref={imgRef}
+                                                    alt="Crop me"
+                                                    src={imgSrc}
+                                                    onLoad={onImageLoad}
+                                                />
+                                            </ReactCrop>
+                                            <Button
+                                                key={'crop now'}
+                                                sx={{
+                                                    mx: 1, my: 1, color: 'white', bgcolor: '#344698',
+                                                    textTransform: 'unset',
+                                                    ':hover': {
+                                                        bgcolor: '#314dbc',
+                                                        color: 'white'
+                                                    },
+                                                    ':active': {
+                                                        bgcolor: '#1d2964',
+                                                        color: 'white'
+                                                    }
+                                                }} onClick={() => handleCropNow(previewCanvasRef.current, imgRef.current)}>Crop Now</Button>
+                                        </div>
+
+                                        {completedCrop && (
+                                            <canvas
+                                                ref={previewCanvasRef}
+                                                style={{
+                                                    border: '1px solid black',
+                                                    objectFit: 'contain',
+                                                    width: 200,
+                                                    height: 200,
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                </Dialog>
+                            )}
+
+                            <img alt="profileImage" src={output || uploadVector} className="object-cover shadow-xl rounded-full h-44 w-44 align-middle border-none mb-4" />
+                            <BsFillCameraFill onClick={handlePickImage} className="absolute left-[52vw] top-44 w-10 h-10 p-2 bg-my-blue text-my-yellow rounded-full hover:cursor-pointer hover:bg-blue-800 active:bg-blue-600" />
+
+                            <input className="hidden" type="file" accept="image/png, image/gif, image/jpeg" name="image" onChange={onSelectFile} ref={inputForImage} multiple={false}></input>
+                        </div>
+
                         <div className="md:w-8/12 lg:w-5/12 ">
                             <form onSubmit={handleRegister}>
                                 <p className='text-my-blue text-xs flex flex-row align-center'><HiLightBulb className=" mb-2 mr-1 text-my-blue text-lg" />User Name is strictly required, This will be unique name of your profile.</p>

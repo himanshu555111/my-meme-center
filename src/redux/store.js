@@ -5,11 +5,13 @@ import storage from "redux-persist/lib/storage";
 
 import drawerReducer from "./features/drawer-slice";
 import folderReducer from "./features/folder-slice";
+import userReducer from "./features/user-slice";
 
 
 const reducers = combineReducers({
   drawer: drawerReducer,
-  folder: folderReducer
+  folder: folderReducer,
+  user: userReducer
 });
 
 const persistConfig = {

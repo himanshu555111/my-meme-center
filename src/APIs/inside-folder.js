@@ -12,7 +12,7 @@ const headers = {
 export const getInsideFolderData = (data, callback) => {
   console.log(data, 'get item res')
   return async () => {
-    axios.get(`${INSIDEFOLDERDATA_URL}/${data?.folderName}/${data?.itemName}`, {
+    axios.get(`${INSIDEFOLDERDATA_URL}/${data?.folderName}/${data?.itemId}`, {
       params: data
     }, {
       headers: headers
@@ -25,7 +25,7 @@ export const getInsideFolderData = (data, callback) => {
 export const deleteInsideFolderData = (data, callback) => {
   console.log(data, 'delete item res')
   return async () => {
-    axios.delete(`${INSIDEFOLDERDATA_URL}/${data?.folderName}/${data?.itemName}`, {
+    axios.delete(`${INSIDEFOLDERDATA_URL}/${data?.folderName}/${data?.itemId}`, {
       params: data
     }, {
       headers: headers

@@ -5,19 +5,22 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import { Button, TextField, Typography, MenuItem } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { uploadImageApiCall } from '../APIs/upload-image';
 import { useAlert, types } from 'react-alert';
 import { shadows } from '@mui/system';
-
+import { FaHandPointRight } from 'react-icons/fa';
+import { postKeyword } from '../APIs/keywords';
+import TagsInput from '../components/tagsInput';
 
 
 function UploadImage() {
     const initialFormData = {
         image_name: '',
         is_veg: '',
-        catagory: '',
-        image_ext: ''
+        category: '',
+        image_ext: '',
+        keywordsFieldValidation: false
     }
     const onInputValidate = (value, name) => {
         setFormDataError(prev => ({
@@ -36,7 +39,7 @@ function UploadImage() {
             errorMsg: '',
             onValidateFunc: onInputValidate
         },
-        catagory: {
+        category: {
             isReq: true,
             errorMsg: '',
             onValidateFunc: onInputValidate
@@ -51,10 +54,18 @@ function UploadImage() {
     const [formDataError, setFormDataError] = useState(initFormDataError);
     const [fileInput, setFileInput] = useState('');
     const [imagePreview, setImagePreview] = useState(null);
+    const [keywordsGetByEnterClick, setKeywordsGetByEnterClick] = React.useState([]);
+    const [selectedItem, setSelectedItem] = React.useState([]);
+
+
     const dispatch = useDispatch();
     const alert = useAlert();
     const inputForImage = useRef(null);
-    
+
+    const userInfo = useSelector((state) => state.user.user_info);
+
+    // console.log(userInfo,'userInfo')
+
     const handleSelectFile = () => {
         inputForImage.current.click();
     }
@@ -89,23 +100,72 @@ function UploadImage() {
 
     const handleSubmitImage = (e) => {
         e.preventDefault();
+        var daylist = [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday ",
+            "Thursday",
+            "Friday",
+            "Saturday",
+        ];
+
+        var monthlist = [
+            "January",
+            "February",
+            "March",
+            "April ",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ];
+
+        var today = new Date();
+
+        var day = today.getDay();
+
+        var dd = String(today.getDate()).padStart(2, "0");
+        var mm = today.getMonth()
+        var yyyy = today.getFullYear();
+
+        const finalFormatedDate = `${daylist[day]}, ${monthlist[mm]} ${dd}, ${yyyy} `
+
+        //   console.log(finalFormatedDate,'finalFormatedDate')
+
+
+
+
         const isValid = validateForm();
         if (!isValid || !fileInput) {
             console.error('Invalid Form!');
             return false;
         }
-        const formDataForImageUpload = new FormData(); 
+        const formDataForImageUpload = new FormData();
         formDataForImageUpload.append('image', fileInput);
         formDataForImageUpload.append('name', formData?.image_name);
-        formDataForImageUpload.append('is_veg', formData?.is_veg);
-        formDataForImageUpload.append('catagory', formData?.catagory);
+        formDataForImageUpload.append('is_veg', formData?.is_veg === 'veg' ? true : false);
+        formDataForImageUpload.append('category', formData?.category?.toLowerCase());
         formDataForImageUpload.append('ext', formData?.image_ext);
-        
+        formDataForImageUpload.append('user_id', userInfo?.user_id);
+        formDataForImageUpload.append('user_name', userInfo?.user_name);
+        formDataForImageUpload.append('user_profile_image', userInfo?.url);
+        formDataForImageUpload.append('uploaded_date', finalFormatedDate);
+        formDataForImageUpload.append('tags', selectedItem?.map(res=>res?.keyword_name));
+
+
+
         dispatch(uploadImageApiCall(formDataForImageUpload, data => {
-            console.log('callback data of upload API', data)
             if (data?.status === 200) {
+                dispatch(postKeyword(keywordsGetByEnterClick))
                 setFormData(initialFormData);
                 setImagePreview(null);
+                setSelectedItem([]);
+                setKeywordsGetByEnterClick([]);
                 alert.show('Image Uploaded', { type: types.SUCCESS });
             }
         }))
@@ -126,11 +186,17 @@ function UploadImage() {
         }));
     }
 
-    console.log(formData)
+
+
+    function handleSelecetedTags(items) {
+       
+
+    }
+
 
     return (
         <>
-            <Grid container spacing={2} sx={{ marginTop: 4, bgcolor: "white", padding: 2, borderRadius: '10px', boxShadow:2 }}>
+            <Grid container spacing={2} sx={{ marginTop: 4, bgcolor: "white", padding: 2, borderRadius: '10px', boxShadow: 2 }}>
                 <Grid item xs={4}>
                     <CardMedia
                         component="img"
@@ -155,13 +221,13 @@ function UploadImage() {
                             <TextField
                                 helperText={formDataError?.image_name?.errorMsg === true ? 'This Field is required, please fill this field' : null}
                                 error={formDataError?.image_name?.errorMsg}
-                                onChange={onChange} sx={{ width: '100%',  }} value={formData?.image_name} name="image_name" id="image-name" label="Name of Image" variant="outlined" />
+                                onChange={onChange} sx={{ width: '100%', }} value={formData?.image_name} name="image_name" id="image-name" label="Title" variant="outlined" />
                         </Grid>
                         <Grid item xs={6}>
                             <TextField
-                                helperText={formDataError?.catagory?.errorMsg === true ? 'This Field is required, please fill this field' : null}
-                                error={formDataError?.catagory?.errorMsg}
-                                onChange={onChange} value={formData?.catagory} sx={{ width: '100%',  }} name="catagory" select id="catagory" label="Select Catagory" variant="outlined" >
+                                helperText={formDataError?.category?.errorMsg === true ? 'This Field is required, please fill this field' : null}
+                                error={formDataError?.category?.errorMsg}
+                                onChange={onChange} value={formData?.category} sx={{ width: '100%', }} name="category" select id="category" label="Select Category" variant="outlined" >
                                 <MenuItem value={'bollywood'} key={'bollywood'}>
                                     <Typography textAlign="center">BollyWood</Typography>
                                 </MenuItem>
@@ -190,7 +256,7 @@ function UploadImage() {
                             <TextField
                                 helperText={formDataError?.is_veg?.errorMsg === true ? 'This Field is required, please fill this field' : null}
                                 error={formDataError?.is_veg?.errorMsg}
-                                onChange={onChange} value={formData?.is_veg} sx={{ width: '100%',  }} name="is_veg" select id="image-ext" label="Veg or Non-Veg" variant="outlined">
+                                onChange={onChange} value={formData?.is_veg} sx={{ width: '100%', }} name="is_veg" select id="image-ext" label="Veg or Non-Veg" variant="outlined">
                                 <MenuItem value={'veg'} key={'veg'}>
                                     <Typography textAlign="center">Veg</Typography>
                                 </MenuItem>
@@ -203,7 +269,7 @@ function UploadImage() {
                             <TextField
                                 helperText={formDataError?.image_ext?.errorMsg === true ? 'This Field is required, please fill this field' : null}
                                 error={formDataError?.image_ext?.errorMsg}
-                                onChange={onChange} value={formData?.image_ext} sx={{ width: '100%',  }} name="image_ext" select id="image-ext" label="Select Extension" variant="outlined">
+                                onChange={onChange} value={formData?.image_ext} sx={{ width: '100%', }} name="image_ext" select id="image-ext" label="Select Extension" variant="outlined">
                                 <MenuItem value={'jpeg'} key={'jpeg'}>
                                     <Typography textAlign="center">JPEG</Typography>
                                 </MenuItem>
@@ -215,6 +281,28 @@ function UploadImage() {
                                 </MenuItem>
                             </TextField>
                         </Grid>
+
+                        <Grid item xs={12} sx={{ textAlign: 'left' }}>
+                            <TagsInput
+                                selectedTags={handleSelecetedTags}
+                                setFormData={setFormData}
+                                keywordsGetByEnterClick={keywordsGetByEnterClick}
+                                setKeywordsGetByEnterClick={setKeywordsGetByEnterClick}
+                                selectedItem={selectedItem}
+                                setSelectedItem={setSelectedItem}
+                                value={formData?.keyword}
+                                fullWidth
+                                variant="outlined"
+                                id="tags"
+                                name="tags"
+                                placeholder="Add some tags"
+                                label="Add some tags"
+                            />
+
+                            <span className='text-my-blue text-xs flex flex-row align-center mt-1'><FaHandPointRight className="text-my-blue text-md mr-2" />Hit enter or select suggested keyword, Once you done...</span>
+                            {formData?.keywordsFieldValidation && <p className='text-red-600 text-xs flex flex-row align-center mt-1'>You can not enter more than 10 keywords</p>}
+                        </Grid>
+
                         <Grid item xs={12}>
                             <Button
                                 onClick={handleSubmitImage}

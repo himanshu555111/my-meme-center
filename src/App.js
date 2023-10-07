@@ -1,5 +1,6 @@
 import Navbar from './navbar/navbar';
 import Images from './pages/images';
+import CreateOwnImage from './pages/create-own-image';
 import MyDownloads from './pages/my-downloads';
 import InsideFolder from './pages/inside-folder';
 import Profile from './pages/profile';
@@ -48,7 +49,9 @@ function App() {
             {isLoggedIn === "true" ? <Route path="/mydashboard/mydownloads" element={<MyDownloads />}></Route> : null}
             {isLoggedIn === "true" ? <Route path="/mydashboard/mydownloads/:id" element={<InsideFolder />}></Route> : null}
             {isLoggedIn === "true" ? <Route path="/profile" element={<Profile />}></Route> : null}
-            {isLoggedIn === "true" ? <Route path="/upload-media" element={<UploadMedia />}></Route> : null}       
+            {isLoggedIn === "true" ? <Route path="/upload-media" element={<UploadMedia />}></Route> : null}   
+            {isLoggedIn === "true" ? <Route path="/create/newimage" element={<CreateOwnImage />}></Route> : null}  
+               
             
             <Route path="/login" element={<LogIn />}></Route>
             <Route path="/register" element={<Register />}></Route>

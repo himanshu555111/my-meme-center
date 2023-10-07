@@ -75,8 +75,7 @@ function InsideFolder() {
   }
 
   const deleteDataOnClick = (item) => {
-
-    dispatch(deleteInsideFolderData({ folderName: id, itemName: item?.name }, data => {
+    dispatch(deleteInsideFolderData({ folderName: id, itemId: item?._id }, data => {
       if (data?.status === 200) {
         refreshItemsData();
         handleDeleteModalClose();
@@ -169,7 +168,7 @@ function InsideFolder() {
 
                         </div>
                         <div className='flex flex-row'>
-                          <div className='w-16 h-4 bg-gray-300 text-white rounded-lg text-[10px]'>#{res?.catagory}</div><span className='text-[10px] ml-1'>{` - ${res?.media_type}`}</span>
+                          <div className='w-16 h-4 bg-gray-300 text-white rounded-lg text-[10px]'>#{res?.category}</div><span className='text-[10px] ml-1'>{` - ${res?.media_type}`}</span>
                         </div>
                       </CardActions>
                     </Card>

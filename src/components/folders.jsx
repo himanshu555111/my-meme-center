@@ -8,7 +8,7 @@ import { sizeHeight } from '@mui/system';
 import { deleteFolders, putFolders, putFoldersDesc } from '../APIs/folders';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {set_folder_param_id} from '../redux/features/folder-slice';
+import { set_folder_param_id } from '../redux/features/folder-slice';
 
 
 function useOutsideAlerter(ref, callback) {
@@ -102,16 +102,16 @@ function Folders(props) {
         setFormData(newFormData);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         const folderData = props?.folders;
-       
+
         // setFormData(state=>({
         //     ...state,
         //     name:folderData[0]?.name,
         //     description:folderData[0]?.description
         // }));       
-       
-    },[])
+
+    }, [])
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
@@ -133,7 +133,7 @@ function Folders(props) {
         }
     }
 
-     const handleDescKeyDown = (e) => {
+    const handleDescKeyDown = (e) => {
         if (e.key === 'Enter') {
             if (formData?.description === null || formData?.description === undefined || formData?.description === " ") {
 
@@ -151,7 +151,7 @@ function Folders(props) {
                 }));
             }
         }
-     }
+    }
 
     useMemo(() => {
         if (isRename?.folderName === "clickedOutside") {
@@ -177,7 +177,7 @@ function Folders(props) {
             if (formData?.description === null || formData?.description === undefined || formData?.description === " ") {
 
             } else {
-                dispatch(putFoldersDesc({ param: previousDescName, bodyData: { description:formData?.description } }, data => {
+                dispatch(putFoldersDesc({ param: previousDescName, bodyData: { description: formData?.description } }, data => {
                     if (data?.status === 200) {
                         props?.fetchFolders();
                     } else {
@@ -198,14 +198,14 @@ function Folders(props) {
 
     return (
         <>
-        {/* max-w-screen-lg */}
+            {/* max-w-screen-lg */}
             <div className='flex flex-row flex-wrap'>
                 {
-                    props?.folders?.map((res, index) => (                        
+                    props?.folders?.map((res, index) => (
                         <div key={res?._id} className='mb-6'>
                             <div className={`flex items-center ml-5`}>
                                 <Tooltip title={res?.name} arrow>
-                                    <div onClick={()=>folderClick(res?.name)} onDoubleClick={() => folderNameDoubleClick(res?.name)} className="bg-white border-solid border-2 border-gray-200 p-2 rounded-lg w-fit flex items-center justify-left hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200" >
+                                    <div onDoubleClick={() => folderClick(res?.name)} className="bg-white border-solid border-2 border-gray-200 p-2 rounded-lg w-fit flex items-center justify-left hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200" >
                                         <div>
                                             <div className='flex'>
                                                 <AiFillFolder className='text-[24px] mr-1 text-my-yellow' />
@@ -228,26 +228,26 @@ function Folders(props) {
                                 </Tooltip>
                                 <Tooltip title={`Edit - ${res?.name}`} arrow>
                                     <div onClick={() => {
-                                        props.setOpen(true);   
-                                        props?.setFormData(state=>({
+                                        props.setOpen(true);
+                                        props?.setFormData(state => ({
                                             ...state,
-                                            folderName:res?.name,
-                                            folderDescription:res?.description,
-                                            folderID:res?._id
-                                        }))      
-                                        props?.setPreviousName(state=>({
+                                            folderName: res?.name,
+                                            folderDescription: res?.description,
+                                            folderID: res?._id
+                                        }))
+                                        props?.setPreviousName(state => ({
                                             ...state,
-                                            name:res?.name,
-                                            description:res?.description
-                                        }))                              
+                                            name: res?.name,
+                                            description: res?.description
+                                        }))
                                     }
                                     } className='bg-gray-100 p-2 w-fit rounded-lg ml-2 flex items-center justify-left hover:bg-gray-300 hover:cursor-pointer active:bg-gray-200'><AiFillEdit /></div>
                                 </Tooltip>
                             </div>
-                           {isRename?.folderDes === res?.description ? <input onKeyDown={handleDescKeyDown} ref={descRef} onChange={onChange} type="text" name="description" value={formData?.description} placeholder='rename description' className='p-1'></input> : <p onDoubleClick={() => { folderDesDoubleClick(res?.description, res?._id) }} className='text-xs text-gray-300 mt-1 text-left ml-5 hover:text-my-blue hover:cursor-pointer'>{res?.description}</p>
-                           }
-                           {/* {( (formData?.description === res?.description && isRename?.folderID === res?._id) && (formData?.description === '' ) && (isRename?.folderDes !== res?.description)) && <AiOutlinePlusSquare/>} */}
-                        </div>  
+                            {isRename?.folderDes === res?.description ? <input onKeyDown={handleDescKeyDown} ref={descRef} onChange={onChange} type="text" name="description" value={formData?.description} placeholder='rename description' className='p-1'></input> : <p onDoubleClick={() => { folderDesDoubleClick(res?.description, res?._id) }} className='text-xs text-gray-300 mt-1 text-left ml-5 hover:text-my-blue hover:cursor-pointer'>{res?.description}</p>
+                            }
+                            {/* {( (formData?.description === res?.description && isRename?.folderID === res?._id) && (formData?.description === '' ) && (isRename?.folderDes !== res?.description)) && <AiOutlinePlusSquare/>} */}
+                        </div>
                     ))
                 }
                 <Tooltip title={'Add New Folder'} arrow>

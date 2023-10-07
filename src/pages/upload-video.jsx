@@ -22,7 +22,7 @@ function UploadVideo() {
                     <TextField sx={{ width: '100%', bgcolor: 'white' }} id="image-name" label="Name of Video" variant="outlined" />
                 </Grid>
                 <Grid item xs={6}>
-                    <TextField sx={{ width: '100%', bgcolor: 'white' }} select id="image-catagory" label="Select Catagory" variant="outlined" />
+                    <TextField sx={{ width: '100%', bgcolor: 'white' }} select id="image-category" label="Select Category" variant="outlined" />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField sx={{ width: '100%', bgcolor: 'white' }} select id="image-type" label="Select Type" variant="outlined" />
