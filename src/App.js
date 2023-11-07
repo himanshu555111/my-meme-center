@@ -32,7 +32,7 @@ function App() {
     if (!isLoggedIn || isLoggedIn === 'false') {
       navigate('/login')
     } else {
-      navigate('/profile')
+      // navigate('/profile')
     }
   }, [isLoggedIn])
 
