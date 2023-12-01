@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-const POSTMEDIATOFOLDER_URL = "http://localhost:5000/sendMediaToFolder";
+const POSTMEDIATOFOLDER_URL = "http://localhost:8000/sendMediaToFolder";
 
 
 

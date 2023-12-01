@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const REGISTER_URL = "http://localhost:5000/register";
-const LOGIN_URL = "http://localhost:5000/login";
-const USERDETAILS_URL = "http://localhost:5000/userDetails";
-const ISUSERNAMEEXIST_URL = "http://localhost:5000/isUserNameExist";
+const REGISTER_URL = "http://localhost:8000/register";
+const LOGIN_URL = "http://localhost:8000/login";
+const USERDETAILS_URL = "http://localhost:8000/userDetails";
+const ISUSERNAMEEXIST_URL = "http://localhost:8000/isUserNameExist";
 
 
 const config = {

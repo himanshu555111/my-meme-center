@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const GETFOLDERS_URL = "http://localhost:5000/folder";
-const POSTFOLDERS_URL = "http://localhost:5000/folder";
-const DELETEFOLDER_URL = "http://localhost:5000/folder";
-const UPDATEFOLDER_URL = "http://localhost:5000/folder";
-const UPDATEFOLDERDESC_URL = "http://localhost:5000/folderDescription";
+const GETFOLDERS_URL = "http://localhost:8000/folder";
+const POSTFOLDERS_URL = "http://localhost:8000/folder";
+const DELETEFOLDER_URL = "http://localhost:8000/folder";
+const UPDATEFOLDER_URL = "http://localhost:8000/folder";
+const UPDATEFOLDERDESC_URL = "http://localhost:8000/folderDescription";
 
 
 export const getFolders = (params, callback) => {

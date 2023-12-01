@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const IMAGESDATA_URL = "http://localhost:5000/images";
+const IMAGESDATA_URL = "http://localhost:8000/images";
 
-const IMAGESBYCATDATA_URL = "http://localhost:5000/imagesByCategory";
+const IMAGESBYCATDATA_URL = "http://localhost:8000/imagesByCategory";
 
-const SEARCHIMAGES_URL = "http://localhost:5000/searchImages";
+const SEARCHIMAGES_URL = "http://localhost:8000/searchImages";
 
 
 

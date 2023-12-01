@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const KEYWORDS_URL = "http://localhost:5000/keywords";
+const KEYWORDS_URL = "http://localhost:8000/keywords";
 
 
 

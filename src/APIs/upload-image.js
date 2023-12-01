@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const UPLOADIMAGE_URL = "http://localhost:5000/uploadImage";
+const UPLOADIMAGE_URL = "http://localhost:8000/uploadImage";
 
 
 const config = {
